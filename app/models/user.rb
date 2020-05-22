@@ -1,9 +1,12 @@
 # frozen_string_literal: true
+
 class User < ApplicationRecord
   acts_as_paranoid
-  has_many :leave_times
-  has_many :leave_applications, -> { order(id: :desc) }
-  has_many :bonus_leave_time_logs, -> { order(id: :desc) }
+  has_many :leave_times, dependent: :delete_all
+  has_many :leave_applications, -> { order(id: :desc) }, inverse_of: :user
+  has_many :overtimes, -> { order(id: :desc) }, inverse_of: :user
+  has_many :bonus_leave_time_logs, -> { order(id: :desc) }, inverse_of: :user
+  has_many :overtime_pays
   attr_accessor :assign_leave_time, :assign_date
 
   before_validation :parse_assign_leave_time_attr
@@ -62,6 +65,7 @@ class User < ApplicationRecord
 
   def seniority(time = Date.current)
     return 0 if !fulltime? || join_date >= Date.current
+
     @seniority ||= (join_date.nil? ? 0 : (time - join_date).to_i / 365)
   end
 
@@ -71,6 +75,15 @@ class User < ApplicationRecord
 
   def this_year_join_anniversary
     @this_year_join_anniversary ||= Time.zone.local(Date.current.year, join_date.month, join_date.day).to_date
+  end
+
+  def next_join_anniversary_for_leave_time_type(leave_time_type = 'annual')
+    lt_scope = self.leave_times.where(leave_type: leave_time_type).effective
+    if !lt_scope.empty? && this_year_join_anniversary < Time.current.to_date
+      this_year_join_anniversary + 1.year
+    else
+      this_year_join_anniversary
+    end
   end
 
   def next_join_anniversary
@@ -97,17 +110,20 @@ class User < ApplicationRecord
   end
 
   def parse_assign_leave_time_attr
-    return if !assign_leave_time? or self.assign_date.nil?
+    return if !assign_leave_time? or self.assign_date.blank?
+
     self.assign_date = Date.parse(self.assign_date)
   end
 
   def assign_leave_time_fields
     return unless assign_leave_time?
-    errors.add(:assign_date, :blank) if assign_date.nil?
+
+    errors.add(:assign_date, :blank) if assign_date.blank?
   end
 
   def auto_assign_leave_time
     return if !assign_leave_time? or !valid_role?
+
     leave_time_builder = LeaveTimeBuilder.new self
     leave_time_builder.automatically_import by_assign_date: true
   end

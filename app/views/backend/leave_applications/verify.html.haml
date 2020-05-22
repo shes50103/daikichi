@@ -47,6 +47,10 @@
       %th= t_attribute(:updated_at, current_object)
       %td= l current_object.updated_at, format: :long
 
+    %tr
+      %th= t_attribute(:attachment, current_object)
+      %td= link_to_attachment(current_object.attachment.url)
+
 .panel.panel-info
   .panel-heading
     %h4.panel-title= t_attribute(:leave_time_usages, current_object)
@@ -71,7 +75,6 @@
           %td.text-right= hours_to_humanize usage.leave_time.usable_hours
           %td.text-right= l usage.leave_time.effective_date, format: :detailed
           %td.text-right= l usage.leave_time.expiration_date, format: :detailed
-
 
 - if current_object.pending? or current_object.approved?
   = render "form", action: :verify

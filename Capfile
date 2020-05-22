@@ -1,10 +1,11 @@
+# frozen_string_literal: true
+
 # Load DSL and set up stages
 require "capistrano/setup"
 
 # Include default deployment tasks
 require "capistrano/deploy"
 require 'capistrano/upload-config'
-require 'capistrano/crono'
 
 # Include tasks from other gems included in your Gemfile
 #

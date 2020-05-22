@@ -1,18 +1,20 @@
 # frozen_string_literal: true
+
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '>= 5.0.0.rc1', '< 5.1'
+gem 'rails', '5.2.3'
+gem 'bootsnap'
 # Use postgresql as the database for Active Record
 gem 'pg', '~> 0.18'
 # Use Puma as the app server
-gem 'puma', '~> 3.0'
+gem 'puma', '~> 3.12'
 # Use SCSS for stylesheets
-gem 'sass-rails', '~> 5.0'
+gem 'sassc-rails'
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
 # Use CoffeeScript for .coffee assets and views
-gem 'coffee-rails', '~> 4.1.0'
+gem 'coffee-rails'
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
 # Use jquery as the JavaScript library
@@ -47,7 +49,6 @@ gem 'ransack', git: 'https://github.com/activerecord-hackery/ransack.git'
 gem 'activerecord-import'
 gem 'rails-observers', git: 'https://github.com/rails/rails-observers.git'
 gem 'pivot_table', git: 'https://github.com/edjames/pivot_table'
-gem 'crono'
 gem 'sinatra', require: nil
 gem 'daemons'
 gem 'flowdock'
@@ -55,11 +56,12 @@ gem 'act-fluent-logger-rails'
 gem 'lograge'
 gem 'logstash-event'
 gem 'capybara'
+gem 'carrierwave', '~> 1.2', '>= 1.2.3'
 
 group :development, :test do
   gem 'awesome_print'
   gem 'byebug', platform: :mri
-  gem 'factory_girl_rails'
+  gem 'factory_bot_rails'
   gem 'faker'
   gem 'pry-byebug'
   gem 'timecop'
@@ -68,27 +70,28 @@ group :development, :test do
 end
 
 group :development do
-  gem 'capistrano', '~> 3.8.1'
-  gem 'capistrano-rails', '~> 1.1'
+  gem 'capistrano', '~> 3.11.0'
+  gem 'capistrano-rails', '~> 1.4.0'
   gem 'capistrano-upload-config'
   gem 'capistrano-crono'
-  gem 'hirb-unicode'
-  gem 'listen', '~> 3.0.5'
+  gem 'listen'
   gem 'rack-mini-profiler', '~> 0.10.1'
-  gem 'rubocop'
+  gem 'rubocop', '0.69.0'
+  gem 'rubocop-performance'
   gem 'spring'
-  gem 'spring-watcher-listen', '~> 2.0.0'
-  gem 'web-console'
+  gem 'spring-watcher-listen'
+  gem 'web-console', '3.7.0'
   gem 'i18n-debug'
+  gem 'foreman'
 end
 
 group :test do
-  gem 'codeclimate-test-reporter', '~> 1.0.0'
+  gem 'codeclimate-test-reporter', '~> 1.0.9'
   gem 'database_rewinder'
   gem 'rails-controller-testing'
   gem 'shoulda-matchers'
   gem 'shoulda-callback-matchers'
-  gem 'simplecov'
+  gem 'simplecov', '<= 0.13'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

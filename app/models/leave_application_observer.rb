@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class LeaveApplicationObserver < ActiveRecord::Observer
   observe LeaveApplication
 
@@ -17,7 +18,7 @@ class LeaveApplicationObserver < ActiveRecord::Observer
   def after_create(record)
     create_leave_time_usages(record)
     FlowdockService.new(leave_application: record).send_create_notification if Rails.env.production?
-    InformationMailer.new_application(record).deliver if Rails.env.production?
+    InformationMailer.new_application(record).deliver_later if Rails.env.production?
   end
 
   def before_update(record)
@@ -27,8 +28,8 @@ class LeaveApplicationObserver < ActiveRecord::Observer
   def after_update(record)
     create_leave_time_usages(record) if record.aasm_event?(:revise)
     FlowdockService.new(leave_application: record).send_update_notification(record.aasm.to_state) if Rails.env.production?
-    UserMailer.reply_leave_applicaiton_email(record).deliver if record.aasm_event?(:approve) or record.aasm_event?(:reject)
-    InformationMailer.cancel_application(record).deliver if record.aasm_event?(:cancel) && Rails.env.production?
+    UserMailer.reply_leave_applicaiton_email(record).deliver_later if record.aasm_event?(:approve) or record.aasm_event?(:reject)
+    InformationMailer.cancel_application(record).deliver_later if record.aasm_event?(:cancel) && Rails.env.production?
   end
 
   private
@@ -43,6 +44,7 @@ class LeaveApplicationObserver < ActiveRecord::Observer
 
   def create_leave_hours_by_date(record)
     return unless record.interval_changed?
+
     leave_hours_by_dates = LeaveTimeUsageBuilder.new(record).leave_hours_by_date.map do |date|
       record.leave_hours_by_dates.build(date: date.first, hours: date.second)
     end
@@ -75,6 +77,7 @@ class LeaveApplicationObserver < ActiveRecord::Observer
     usage.reload
     return usage.leave_time.unlock_hours!(usage.used_hours) if record.aasm.from_state == :pending
     return usage.leave_time.unuse_hours!(usage.used_hours) if record.aasm.from_state == :approved
+
     raise ActiveRecord::Rollback
   end
 end

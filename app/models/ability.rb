@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class Ability
   include CanCan::Ability
 
@@ -10,6 +11,7 @@ class Ability
     when 'employee', 'parttime', 'intern'
       can :read, LeaveTime, user_id: user.id
       can :manage, LeaveApplication, user_id: user.id
+      can :manage, Overtime, user_id: user.id
     when 'contractor'
       can :manage, LeaveApplication, user_id: user.id
     end

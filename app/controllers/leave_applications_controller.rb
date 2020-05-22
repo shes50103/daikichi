@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class LeaveApplicationsController < BaseController
   include Selectable
   before_action :set_query_object
@@ -71,7 +72,7 @@ class LeaveApplicationsController < BaseController
 
   def resource_params
     params.require(:leave_application).permit(
-      :leave_type, :start_time, :end_time, :description
+      :leave_type, :start_time, :end_time, :description, :attachment
     )
   end
 

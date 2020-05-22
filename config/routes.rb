@@ -4,6 +4,10 @@ Rails.application.routes.draw do
 
     root "pages#index"
 
+    if Rails.application.config.enable_sign_in_as
+      get 'login_as', to: "sessions#login_as"
+    end
+
     namespace :backend do
       resources :users
 
@@ -16,6 +20,12 @@ Rails.application.routes.draw do
         post :append_quota, on: :collection
         get :batch_new, on: :collection
         post :batch_create, on: :collection
+      end
+
+      resources :overtimes, except: [:show, :destroy] do
+        get :verify, :add_leave_time, :add_compensatory_pay, on: :member
+        post :create_leave_time, :create_compensatory_pay, on: :member
+        get :statistics, on: :collection
       end
 
       resources :bonus_leave_time_logs, only: [:index, :update]
@@ -35,8 +45,11 @@ Rails.application.routes.draw do
     resources :leave_times, only: [:index, :show]
     resources :remote, only: [:new, :create, :update, :edit]
 
-    authenticate :user, lambda { |u| u.is_manager? } do
-      mount Crono::Web, at: '/crono'
+    resources :overtimes, except: :destroy do
+      member do
+        put "cancel"
+      end
     end
+
   end
 end

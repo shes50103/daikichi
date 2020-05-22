@@ -6,7 +6,6 @@
 
 # Ignore bundler config.
 /.bundle
-/.ruby-version
 
 # Ignore all logfiles and tempfiles.
 /log/*
@@ -18,13 +17,13 @@
 /.byebug_history
 /vendor/bundle/*
 /public/assets
+/public/uploads
 
 /config/database.yml
 /config/secrets.yml
 /config/application.yml
 
 # Personal settings
-/.irbrc
 /.powenv
 
 # Private data
@@ -40,3 +39,4 @@ docker-compose.yml
 
 /db/fixtures/production/
 /config/*.yml
+Procfile
